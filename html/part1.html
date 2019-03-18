@@ -1,0 +1,500 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>part1</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-03-17"><meta name="DC.source" content="part1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%clear all</span>
+
+
+<span class="comment">%          ELEC 4700 - Assignment 3          %</span>
+<span class="comment">%    Monte-Carlo/Finite Difference Method    %</span>
+<span class="comment">%            Patrobas Adewumi                %</span>
+<span class="comment">%            Sunday, March 17, 2019          %</span>
+clearvars
+clearvars <span class="string">-GLOBAL</span>
+close <span class="string">all</span>
+
+<span class="keyword">global</span> C
+<span class="keyword">global</span> X Y
+
+    C.q_0 = 1.60217653e-19;             <span class="comment">% electron charge</span>
+    C.hb = 1.054571596e-34;             <span class="comment">% Dirac constant</span>
+    C.h = C.hb * 2 * pi;                <span class="comment">% Planck constant</span>
+    C.m_0 = 9.10938215e-31;             <span class="comment">% electron mass</span>
+    C.kb = 1.3806504e-23;               <span class="comment">% Boltzmann constant</span>
+    C.eps_0 = 8.854187817e-12;          <span class="comment">% vacuum permittivity</span>
+    C.mu_0 = 1.2566370614e-6;           <span class="comment">% vacuum permeability</span>
+    C.c = 299792458;                    <span class="comment">% speed of light</span>
+    C.g = 9.80665;                      <span class="comment">% metres (32.1740 ft) per s&sup2;</span>
+
+mn = 0.26*C.m_0;                          <span class="comment">%   Electron mass</span>
+Temp = 300;                             <span class="comment">%   Given in kelvin</span>
+rTime = 10000;                            <span class="comment">%   Run time in timesteps</span>
+MTBC = 0.2e-12;
+Vleft = 0.1;                            <span class="comment">%   Voltage of left side</span>
+electronConc = 10e15;
+
+
+Vth = sqrt(2*C.kb*Temp/mn);             <span class="comment">%  Thermal velocity</span>
+
+<span class="comment">%   Establish inital electron positions</span>
+<span class="comment">%   Working area 200nm x 100nm</span>
+
+workX = 200*10^-9;
+workY = 100*10^-9;
+area = workX*workY;
+
+size = 1000;
+displaySize = 10;
+
+X = rand(2,size);
+Y = rand(2,size);
+
+<span class="comment">%   Positions initialize</span>
+Xpos(1,:)= X(1,:)*workX;
+Ypos(1,:)= Y(1,:)*workY;
+
+colour = rand(1,displaySize);
+
+<span class="comment">%   For normal distribution of velocity</span>
+Vthn = Vth/sqrt(2);
+Xvel = Vthn*randn(1,size);
+Yvel = Vthn*randn(1,size);
+
+<span class="comment">%   Set timestep of function</span>
+spacStep = 0.01*workY;
+dt = spacStep/Vth;
+steps = 1000;
+
+<span class="comment">%   Variable change</span>
+Xvel(1,:) = Xvel(1,:)*dt;
+Yvel(1,:) = Yvel(1,:)*dt;
+
+<span class="comment">%   Percent scatter</span>
+Pscat = 1-exp(-(dt/MTBC));
+
+MFPcount = zeros(1,size);
+
+Efield = Vleft/workX;
+force = Efield*C.q_0;
+acceleration = force/mn;
+accelVelocity = acceleration*(dt^2);
+
+figure(1)
+currentHistory = zeros(1,steps);
+
+<span class="keyword">for</span> i = 1:1:steps
+
+
+    Xvel(:,:) = Xvel(:,:) + accelVelocity;  <span class="comment">%Accelerate velocities</span>
+
+    <span class="comment">%   Scattering</span>
+    scattered = rand(1,size);
+    scatterCheck = scattered &lt;= Pscat;
+    velocity = Vthn*randn(1,size);
+    Xvel(scatterCheck) = velocity(scatterCheck)*dt;
+    velocity = Vthn*randn(1,size);
+    Yvel(scatterCheck) = velocity(scatterCheck)*dt;
+    tvelocity = sqrt((Xvel/dt).^2 +(Yvel/dt).^2);
+    MFPcount(~scatterCheck) = MFPcount(~scatterCheck) + spacStep;
+
+    <span class="comment">% Position advance and Logical indexing</span>
+    checkXright = Xpos + Xvel &gt; 2e-7;
+    Xpos(checkXright) = Xpos(checkXright)+ Xvel(checkXright)- workX;
+    checkXleft = Xpos + Xvel&lt;0;
+    Xpos(checkXleft) = Xpos(checkXleft) + Xvel(checkXleft) + workX;
+
+    <span class="comment">% Leftover x</span>
+    leftover = ~(checkXright | checkXleft);
+
+    Xpos(leftover) = Xpos(leftover) + Xvel(leftover);
+
+    <span class="comment">% Reflect Y boundary</span>
+    checkY = (Ypos + Yvel &gt; 1e-7 | Ypos + Yvel&lt;0);
+    Yvel(checkY) = Yvel(checkY).*(-1);
+    Ypos(1,:) = Ypos(1,:)+ Yvel(1,:);
+
+    <span class="comment">% Temperature calculations</span>
+    calcTemp = 0.5*mn*(tvelocity.^2)/(2*C.kb);
+    averageTemp = sum(calcTemp)/size;
+
+    <span class="comment">% MFP calculation</span>
+    MFP = sum(MFPcount)/size;
+
+    <span class="comment">%   Current tracking</span>
+    avgVel = sum(tvelocity)/size;
+    mu = (avgVel)/Efield;
+    currentHistory(i) = C.q_0*electronConc*mu*Efield/area;
+
+    <span class="comment">%   Plotting here</span>
+    prevX(i,:) = Xpos(1,:);
+    prevY(i,:) = Ypos(1,:);
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> j = 1:1:displaySize
+        plot(prevX(:,j),prevY(:,j),<span class="string">'color'</span>,[colour(1,j) 0 j/displaySize])
+
+        xlim([0 workX])
+        ylim([0 workY])
+        hold <span class="string">on</span>
+        drawnow
+<span class="keyword">end</span>
+title(<span class="string">'Plot of Particle Trajectories'</span>),xlabel(<span class="string">'X direction'</span>),ylabel(<span class="string">'Y direction'</span>)
+hold <span class="string">off</span>
+
+figure(2)
+plot(linspace(1,steps,steps),currentHistory)
+title(<span class="string">'Current Plot'</span>)
+xlabel(<span class="string">'Time step'</span>)
+ylabel(<span class="string">'Current'</span>)
+
+<span class="comment">%   Display for submission</span>
+disp(<span class="string">'Electric Field:'</span>)
+disp(Efield)
+disp(<span class="string">'Force'</span>)
+disp(force)
+disp(<span class="string">'Acceleration'</span>)
+disp(acceleration)
+
+disp(<span class="string">'current = q*n*mu*E/area'</span>)
+<span class="comment">%   Temperature maps</span>
+resX = 25;
+resY = 25;
+Xedges = linspace(0,workX,resX);
+Yedges = linspace(0,workY,resY);
+
+Xbins = discretize(Xpos,Xedges);
+Ybins = discretize(Ypos,Yedges);
+
+binTemp = zeros(resX,resY);
+<span class="keyword">for</span> k = 1:1:resX
+    <span class="keyword">for</span> L = 1:1:resY
+        logicX = Xbins == k;
+        logicY = Ybins == L;
+        logic = logicX &amp; logicY;
+        sumX = sum(Xvel(logic))/dt;
+        sumY = sum(Yvel(logic))/dt;
+        meanvel = sqrt((sumX)^2+(sumY)^2);
+        binTemp(k,L) = mn*(meanvel)^2/(2*C.kb);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure(3)
+surf(binTemp)
+xlim([1 resX])
+ylim([1 resY])
+title(<span class="string">'Temperature Map'</span>)
+colorbar;
+
+<span class="comment">%   Density map</span>
+resX = 25;
+resY = 25;
+Xedges = linspace(0,workX,resX);
+Yedges = linspace(0,workY,resY);
+
+Xbins = discretize(Xpos,Xedges);
+Ybins = discretize(Ypos,Yedges);
+
+binDens = zeros(resX,resY);
+<span class="keyword">for</span> k = 1:1:resX
+    <span class="keyword">for</span> L = 1:1:resY
+        logicX = Xbins == k;
+        logicY = Ybins == L;
+        logic = logicX &amp; logicY;
+        binDens(k,L) = sum(Xbins(logic))/k + sum(Ybins(logic))/L;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure(4)
+surf(binDens)
+title(<span class="string">'Density Map'</span>)
+xlim([1 resX])
+ylim([1 resY])
+colorbar;
+</pre><pre class="codeoutput">Electric Field:
+      500000
+
+Force
+   8.0109e-14
+
+Acceleration
+   3.3823e+17
+
+current = q*n*mu*E/area
+</pre><img vspace="5" hspace="5" src="part1_01.png" alt=""> <img vspace="5" hspace="5" src="part1_02.png" alt=""> <img vspace="5" hspace="5" src="part1_03.png" alt=""> <img vspace="5" hspace="5" src="part1_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%clear all
+
+
+%          ELEC 4700 - Assignment 3          %
+%    Monte-Carlo/Finite Difference Method    %
+%            Patrobas Adewumi                %
+%            Sunday, March 17, 2019          %
+clearvars
+clearvars -GLOBAL
+close all
+
+global C
+global X Y
+
+    C.q_0 = 1.60217653e-19;             % electron charge
+    C.hb = 1.054571596e-34;             % Dirac constant
+    C.h = C.hb * 2 * pi;                % Planck constant
+    C.m_0 = 9.10938215e-31;             % electron mass
+    C.kb = 1.3806504e-23;               % Boltzmann constant
+    C.eps_0 = 8.854187817e-12;          % vacuum permittivity
+    C.mu_0 = 1.2566370614e-6;           % vacuum permeability
+    C.c = 299792458;                    % speed of light
+    C.g = 9.80665;                      % metres (32.1740 ft) per s²
+    
+mn = 0.26*C.m_0;                          %   Electron mass
+Temp = 300;                             %   Given in kelvin
+rTime = 10000;                            %   Run time in timesteps
+MTBC = 0.2e-12;
+Vleft = 0.1;                            %   Voltage of left side
+electronConc = 10e15;
+
+
+Vth = sqrt(2*C.kb*Temp/mn);             %  Thermal velocity
+
+%   Establish inital electron positions
+%   Working area 200nm x 100nm
+
+workX = 200*10^-9;
+workY = 100*10^-9;
+area = workX*workY;
+
+size = 1000;
+displaySize = 10;
+
+X = rand(2,size);
+Y = rand(2,size);
+
+%   Positions initialize
+Xpos(1,:)= X(1,:)*workX;
+Ypos(1,:)= Y(1,:)*workY;
+
+colour = rand(1,displaySize);
+
+%   For normal distribution of velocity
+Vthn = Vth/sqrt(2);
+Xvel = Vthn*randn(1,size);
+Yvel = Vthn*randn(1,size);
+
+%   Set timestep of function
+spacStep = 0.01*workY;
+dt = spacStep/Vth;
+steps = 1000;
+
+%   Variable change
+Xvel(1,:) = Xvel(1,:)*dt;
+Yvel(1,:) = Yvel(1,:)*dt;
+
+%   Percent scatter
+Pscat = 1-exp(-(dt/MTBC));
+
+MFPcount = zeros(1,size);
+
+Efield = Vleft/workX;
+force = Efield*C.q_0;
+acceleration = force/mn;
+accelVelocity = acceleration*(dt^2);
+
+figure(1)
+currentHistory = zeros(1,steps);
+
+for i = 1:1:steps
+    
+    
+    Xvel(:,:) = Xvel(:,:) + accelVelocity;  %Accelerate velocities
+    
+    %   Scattering  
+    scattered = rand(1,size);
+    scatterCheck = scattered <= Pscat;
+    velocity = Vthn*randn(1,size);
+    Xvel(scatterCheck) = velocity(scatterCheck)*dt;
+    velocity = Vthn*randn(1,size);
+    Yvel(scatterCheck) = velocity(scatterCheck)*dt;
+    tvelocity = sqrt((Xvel/dt).^2 +(Yvel/dt).^2);
+    MFPcount(~scatterCheck) = MFPcount(~scatterCheck) + spacStep;
+    
+    % Position advance and Logical indexing
+    checkXright = Xpos + Xvel > 2e-7;  
+    Xpos(checkXright) = Xpos(checkXright)+ Xvel(checkXright)- workX;
+    checkXleft = Xpos + Xvel<0;      
+    Xpos(checkXleft) = Xpos(checkXleft) + Xvel(checkXleft) + workX;
+    
+    % Leftover x 
+    leftover = ~(checkXright | checkXleft);
+    
+    Xpos(leftover) = Xpos(leftover) + Xvel(leftover);
+    
+    % Reflect Y boundary
+    checkY = (Ypos + Yvel > 1e-7 | Ypos + Yvel<0);
+    Yvel(checkY) = Yvel(checkY).*(-1);
+    Ypos(1,:) = Ypos(1,:)+ Yvel(1,:);
+    
+    % Temperature calculations
+    calcTemp = 0.5*mn*(tvelocity.^2)/(2*C.kb);
+    averageTemp = sum(calcTemp)/size;
+    
+    % MFP calculation
+    MFP = sum(MFPcount)/size;
+    
+    %   Current tracking
+    avgVel = sum(tvelocity)/size;
+    mu = (avgVel)/Efield;
+    currentHistory(i) = C.q_0*electronConc*mu*Efield/area;
+    
+    %   Plotting here
+    prevX(i,:) = Xpos(1,:);
+    prevY(i,:) = Ypos(1,:);
+end
+
+for j = 1:1:displaySize
+        plot(prevX(:,j),prevY(:,j),'color',[colour(1,j) 0 j/displaySize])
+        
+        xlim([0 workX])
+        ylim([0 workY])
+        hold on
+        drawnow
+end
+title('Plot of Particle Trajectories'),xlabel('X direction'),ylabel('Y direction')
+hold off
+
+figure(2)
+plot(linspace(1,steps,steps),currentHistory)
+title('Current Plot')
+xlabel('Time step')
+ylabel('Current')
+
+%   Display for submission
+disp('Electric Field:')
+disp(Efield)
+disp('Force')
+disp(force)
+disp('Acceleration')
+disp(acceleration)
+
+disp('current = q*n*mu*E/area')
+%   Temperature maps
+resX = 25;
+resY = 25;
+Xedges = linspace(0,workX,resX);
+Yedges = linspace(0,workY,resY);
+
+Xbins = discretize(Xpos,Xedges);
+Ybins = discretize(Ypos,Yedges);
+
+binTemp = zeros(resX,resY);
+for k = 1:1:resX 
+    for L = 1:1:resY 
+        logicX = Xbins == k;
+        logicY = Ybins == L;
+        logic = logicX & logicY;
+        sumX = sum(Xvel(logic))/dt;
+        sumY = sum(Yvel(logic))/dt;
+        meanvel = sqrt((sumX)^2+(sumY)^2);
+        binTemp(k,L) = mn*(meanvel)^2/(2*C.kb);
+    end
+end
+
+figure(3)
+surf(binTemp)
+xlim([1 resX])
+ylim([1 resY])
+title('Temperature Map')
+colorbar;
+
+%   Density map
+resX = 25;
+resY = 25;
+Xedges = linspace(0,workX,resX);
+Yedges = linspace(0,workY,resY);
+
+Xbins = discretize(Xpos,Xedges);
+Ybins = discretize(Ypos,Yedges);
+
+binDens = zeros(resX,resY);
+for k = 1:1:resX              
+    for L = 1:1:resY          
+        logicX = Xbins == k;
+        logicY = Ybins == L;
+        logic = logicX & logicY;
+        binDens(k,L) = sum(Xbins(logic))/k + sum(Ybins(logic))/L;
+    end
+end
+
+figure(4)
+surf(binDens)
+title('Density Map')
+xlim([1 resX])
+ylim([1 resY])
+colorbar;
+
+
+##### SOURCE END #####
+--></body></html>

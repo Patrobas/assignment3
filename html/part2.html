@@ -1,0 +1,293 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>part2</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-03-17"><meta name="DC.source" content="part2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%          ELEC 4700 - Assignment 3          %</span>
+<span class="comment">%    Monte-Carlo/Finite Difference Method    %</span>
+<span class="comment">%            Patrobas Adewumi                %</span>
+<span class="comment">%            Sunday, March 17, 2019          %</span>
+
+<span class="keyword">global</span> C
+
+C.q_0 = 1.60217653e-19;                 <span class="comment">% electron charge</span>
+    C.hb = 1.054571596e-34;             <span class="comment">% Dirac constant</span>
+    C.h = C.hb * 2 * pi;                <span class="comment">% Planck constant</span>
+    C.m_0 = 9.10938215e-31;             <span class="comment">% electron mass</span>
+    C.kb = 1.3806504e-23;               <span class="comment">% Boltzmann constant</span>
+    C.eps_0 = 8.854187817e-12;          <span class="comment">% vacuum permittivity</span>
+    C.mu_0 = 1.2566370614e-6;           <span class="comment">% vacuum permeability</span>
+    C.c = 299792458;                    <span class="comment">% speed of light</span>
+    C.g = 9.80665;
+
+W = 50;
+L = W*3/2;
+
+centreX = L/2;
+centreY = W/2;
+
+
+G = zeros(L*W,L*W);
+B = zeros(L*W,1);
+
+<span class="comment">%   Conductivity</span>
+s1 = 1;
+s2 = 0.01;
+
+<span class="comment">%   Resistive regions size</span>
+rL = L*1/4;
+rW = W*2/5;
+
+<span class="comment">%   Create sigma map</span>
+Smap = zeros(L,W);
+<span class="keyword">for</span> i = 1:1:L
+    <span class="keyword">for</span> j = 1:1:W
+        <span class="keyword">if</span>((i &gt; centreX -(rL/2) &amp;&amp; i &lt; centreX + (rL/2)) &amp;&amp; <span class="keyword">...</span>
+                    (j &gt; centreY+(rW/2) || j &lt; centreY - (rW/2)))
+            Smap(i,j) = s2;
+        <span class="keyword">else</span>
+            Smap(i,j) = s1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">for</span> i = 1:1:L
+    <span class="keyword">for</span> j = 1:1:W
+        n = j +(i-1)*W;
+        nxm = j + (i-2)*W;
+        nxp = j + i*W;
+        nyp = j + 1+ (i-1)*W;
+        nym = j - 1+ (i-1)*W;
+
+        <span class="keyword">if</span>(i==1)
+            G(n,:) = 0;
+            G(n,n) = Smap(i,j);
+            B(n) = 1;
+        <span class="keyword">elseif</span>(i==L)
+            G(n,:) = 0;
+            G(n,n) = Smap(i,j);
+            B(n) = 0;
+        <span class="keyword">elseif</span>(j==1)
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nyp) = (Smap(i,j+1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nyp));
+        <span class="keyword">elseif</span>(j==W)
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nym) = (Smap(i,j-1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nym));
+        <span class="keyword">else</span>
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nyp) = (Smap(i,j+1)+Smap(i,j))/2;
+            G(n,nym) = (Smap(i,j-1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nyp)+G(n,nym));
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+V = G\B;
+Vmap = zeros(L,W);
+<span class="keyword">for</span> i = 1:1:L
+    <span class="keyword">for</span> j =1:1:W
+        n = j +(i-1)*W;
+        Vmap(i,j) = V(n);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+[MX,MY] = meshgrid(1:1:W,1:1:L);
+[Ey,Ex] = gradient(Vmap);
+
+figure(5)
+surf(Vmap)
+colorbar
+title(<span class="string">'Voltage map'</span>),xlabel(<span class="string">'X direction'</span>),ylabel(<span class="string">'Y direction'</span>),zlabel(<span class="string">'Voltage'</span>)
+
+figure(6)
+quiver(MX,MY,Ex,Ey)
+title(<span class="string">'Quiver Plot of Electric Field'</span>),xlabel(<span class="string">'X direction'</span>),ylabel(<span class="string">'Y direction'</span>)
+</pre><img vspace="5" hspace="5" src="part2_01.png" alt=""> <img vspace="5" hspace="5" src="part2_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+
+%          ELEC 4700 - Assignment 3          %
+%    Monte-Carlo/Finite Difference Method    %
+%            Patrobas Adewumi                %
+%            Sunday, March 17, 2019          %
+
+global C
+
+C.q_0 = 1.60217653e-19;                 % electron charge
+    C.hb = 1.054571596e-34;             % Dirac constant
+    C.h = C.hb * 2 * pi;                % Planck constant
+    C.m_0 = 9.10938215e-31;             % electron mass
+    C.kb = 1.3806504e-23;               % Boltzmann constant
+    C.eps_0 = 8.854187817e-12;          % vacuum permittivity
+    C.mu_0 = 1.2566370614e-6;           % vacuum permeability
+    C.c = 299792458;                    % speed of light
+    C.g = 9.80665;
+
+W = 50;
+L = W*3/2;
+
+centreX = L/2;
+centreY = W/2;
+
+
+G = zeros(L*W,L*W);
+B = zeros(L*W,1);
+
+%   Conductivity
+s1 = 1;
+s2 = 0.01;
+
+%   Resistive regions size
+rL = L*1/4;
+rW = W*2/5;
+
+%   Create sigma map
+Smap = zeros(L,W);
+for i = 1:1:L
+    for j = 1:1:W
+        if((i > centreX -(rL/2) && i < centreX + (rL/2)) && ...
+                    (j > centreY+(rW/2) || j < centreY - (rW/2)))
+            Smap(i,j) = s2;
+        else
+            Smap(i,j) = s1;
+        end
+    end
+end
+        
+
+
+for i = 1:1:L
+    for j = 1:1:W
+        n = j +(i-1)*W;
+        nxm = j + (i-2)*W;
+        nxp = j + i*W;
+        nyp = j + 1+ (i-1)*W;
+        nym = j - 1+ (i-1)*W;
+        
+        if(i==1)
+            G(n,:) = 0;
+            G(n,n) = Smap(i,j);
+            B(n) = 1;
+        elseif(i==L)
+            G(n,:) = 0;
+            G(n,n) = Smap(i,j);
+            B(n) = 0;
+        elseif(j==1)
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nyp) = (Smap(i,j+1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nyp));
+        elseif(j==W)
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nym) = (Smap(i,j-1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nym));
+        else          
+            G(n,:) = 0;
+            G(n,nxm) = (Smap(i-1,j)+Smap(i,j))/2;
+            G(n,nxp) = (Smap(i+1,j)+Smap(i,j))/2;
+            G(n,nyp) = (Smap(i,j+1)+Smap(i,j))/2;
+            G(n,nym) = (Smap(i,j-1)+Smap(i,j))/2;
+            G(n,n) = -(G(n,nxm)+G(n,nxp)+G(n,nyp)+G(n,nym));   
+        end
+    end
+end
+
+V = G\B;
+Vmap = zeros(L,W);
+for i = 1:1:L
+    for j =1:1:W
+        n = j +(i-1)*W;
+        Vmap(i,j) = V(n);
+    end
+end
+
+[MX,MY] = meshgrid(1:1:W,1:1:L);
+[Ey,Ex] = gradient(Vmap);
+
+figure(5)
+surf(Vmap)
+colorbar
+title('Voltage map'),xlabel('X direction'),ylabel('Y direction'),zlabel('Voltage')
+
+figure(6)
+quiver(MX,MY,Ex,Ey)
+title('Quiver Plot of Electric Field'),xlabel('X direction'),ylabel('Y direction')
+
+##### SOURCE END #####
+--></body></html>
